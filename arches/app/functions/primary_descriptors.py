@@ -63,7 +63,6 @@ class PrimaryDescriptorsFunction(AbstractPrimaryDescriptorsFunction):
                             nodegroup_id=uuid.UUID(config["nodegroup_id"])
                         )
                         .filter(resourceinstance_id=resource.resourceinstanceid)
-                        .order_by("sortorder")
                         .first()
                     )
 

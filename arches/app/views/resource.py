@@ -245,7 +245,7 @@ class ResourceEditorView(MapBaseManagerView):
                 is_system_settings = True
                 displayname = _("System Settings")
 
-            tiles = resource_instance.tilemodel_set.order_by("sortorder").filter(
+            tiles = resource_instance.tilemodel_set.filter(
                 nodegroup_id__in=[nodegroup.pk for nodegroup in nodegroups]
             )
             provisionaltiles = []
@@ -300,16 +300,9 @@ class ResourceEditorView(MapBaseManagerView):
                 ]
             ]
         else:
-            cards = (
-                graph.cardmodel_set.order_by("sortorder")
-                .filter(nodegroup__in=nodegroups)
-                .prefetch_related(
-                    Prefetch(
-                        "cardxnodexwidget_set",
-                        queryset=models.CardXNodeXWidget.objects.order_by("sortorder"),
-                    )
-                )
-            )
+            cards = graph.cardmodel_set.filter(
+                nodegroup__in=nodegroups
+            ).prefetch_related("cardxnodexwidget_set")
             serialized_cards = JSONSerializer().serializeToPython(cards)
             cardwidgets = []
             for card in cards:

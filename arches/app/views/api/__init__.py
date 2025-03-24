@@ -206,14 +206,11 @@ class GeoJSON(APIBase):
         if nodeid:
             node_filter.append(nodeid)
         nodes = nodes.filter(nodeid__in=node_filter)
-        nodes = nodes.order_by("sortorder")
         features = []
         i = 1
         property_tiles = models.TileModel.objects.filter(nodegroup_id__in=nodegroups)
         property_node_map = {}
-        property_nodes = models.Node.objects.filter(
-            nodegroup_id__in=nodegroups
-        ).order_by("sortorder")
+        property_nodes = models.Node.objects.filter(nodegroup_id__in=nodegroups)
         exclusive_set, filtered_instance_ids = get_filtered_instances(
             request.user, self.se, resources=resourceid.split(",")
         )
@@ -233,7 +230,6 @@ class GeoJSON(APIBase):
             tiles = tiles.filter(resourceinstance_id__in=resourceid.split(","))
         if tileid is not None:
             tiles = tiles.filter(tileid=tileid)
-        tiles = tiles.order_by("sortorder")
         resource_available = str(tile.resourceinstance_id) not in filtered_instance_ids
         resource_available = (
             not (resource_available) if exclusive_set else resource_available
@@ -258,7 +254,7 @@ class GeoJSON(APIBase):
                             if len(nodegroups) > 0:
                                 for pt in property_tiles.filter(
                                     resourceinstance_id=tile.resourceinstance_id
-                                ).order_by("sortorder"):
+                                ):
                                     for key in pt.data:
                                         field_name = (
                                             key
@@ -375,9 +371,7 @@ class Graphs(APIBase):
 
             if get_cards:
                 datatypes = models.DDataType.objects.all()
-                cards = CardProxyModel.objects.filter(graph_id=graph_id).order_by(
-                    "sortorder"
-                )
+                cards = CardProxyModel.objects.filter(graph_id=graph_id)
                 permitted_cards = []
                 for card in cards:
                     if user.has_perm(perm, card.nodegroup):
@@ -386,8 +380,7 @@ class Graphs(APIBase):
                 cardwidgets = [
                     widget
                     for widgets in [
-                        card.cardxnodexwidget_set.order_by("sortorder").all()
-                        for card in permitted_cards
+                        card.cardxnodexwidget_set.all() for card in permitted_cards
                     ]
                     for widget in widgets
                 ]
@@ -1020,7 +1013,7 @@ class Card(APIBase):
 
             tiles = resource_instance.tilemodel_set.filter(
                 nodegroup_id__in=[ng.pk for ng in permitted_nodegroups]
-            ).order_by("sortorder")
+            )
             provisionaltiles = []
             for tile in tiles:
                 append_tile = True
@@ -1069,16 +1062,9 @@ class Card(APIBase):
                 )
             ]
         else:
-            cards = (
-                graph.cardmodel_set.order_by("sortorder")
-                .filter(nodegroup__in=permitted_nodegroups)
-                .prefetch_related(
-                    Prefetch(
-                        "cardxnodexwidget_set",
-                        queryset=models.CardXNodeXWidget.objects.order_by("sortorder"),
-                    )
-                )
-            )
+            cards = graph.cardmodel_set.filter(
+                nodegroup__in=permitted_nodegroups
+            ).prefetch_related("cardxnodexwidget_set")
             serialized_cards = JSONSerializer().serializeToPython(cards)
             cardwidgets = []
             for card in cards:
@@ -1630,13 +1616,9 @@ class BulkResourceReport(APIBase):
         permitted_cards = []
 
         if "cards" not in exclude:
-            cards = (
-                CardProxyModel.objects.filter(
-                    graph_id__in=graph_ids_with_templates_that_preload_resource_data
-                )
-                .select_related("nodegroup")
-                .order_by("sortorder")
-            )
+            cards = CardProxyModel.objects.filter(
+                graph_id__in=graph_ids_with_templates_that_preload_resource_data
+            ).select_related("nodegroup")
 
             perm = "read_nodegroup"
             permitted_cards = []
@@ -1662,10 +1644,7 @@ class BulkResourceReport(APIBase):
 
             cardwidgets = [
                 widget
-                for widgets in [
-                    card.cardxnodexwidget_set.order_by("sortorder").all()
-                    for card in graph_cards
-                ]
+                for widgets in [card.cardxnodexwidget_set.all() for card in graph_cards]
                 for widget in widgets
             ]
 

@@ -53,6 +53,7 @@ class Tile(models.TileModel):
 
     class Meta:
         proxy = True
+        ordering = ["sortorder"]
 
     def __init__(self, *args, **kwargs):
         """

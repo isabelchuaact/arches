@@ -93,6 +93,7 @@ class CardModel(SaveSupportsBlindOverwriteMixin, models.Model):
     class Meta:
         managed = True
         db_table = "cards"
+        ordering = ["sortorder"]
 
 
 class ConstraintModel(SaveSupportsBlindOverwriteMixin, models.Model):
@@ -169,6 +170,7 @@ class CardXNodeXWidget(SaveSupportsBlindOverwriteMixin, models.Model):
         managed = True
         db_table = "cards_x_nodes_x_widgets"
         unique_together = (("node", "card", "widget"),)
+        ordering = ["sortorder"]
 
 
 class Concept(SaveSupportsBlindOverwriteMixin, models.Model):
@@ -860,6 +862,7 @@ class Node(SaveSupportsBlindOverwriteMixin, models.Model):
     class Meta:
         managed = True
         db_table = "nodes"
+        ordering = ["sortorder"]
         constraints = [
             models.UniqueConstraint(
                 fields=["name", "nodegroup"], name="unique_nodename_nodegroup"
@@ -1553,6 +1556,7 @@ class TileModel(SaveSupportsBlindOverwriteMixin, models.Model):  # Tile
     class Meta:
         managed = True
         db_table = "tiles"
+        ordering = ["sortorder"]
 
     def __repr__(self):
         return f"<{self.find_nodegroup_alias()} ({self.pk})>"
@@ -1952,6 +1956,7 @@ class Plugin(SaveSupportsBlindOverwriteMixin, models.Model):
     class Meta:
         managed = True
         db_table = "plugins"
+        ordering = ["sortorder"]
 
 
 class WorkflowHistory(models.Model):
@@ -2093,6 +2098,7 @@ class ETLModule(models.Model):
     class Meta:
         managed = True
         db_table = "etl_modules"
+        ordering = ["helpsortorder"]
 
     def get_class_module(self):
         return get_class_from_modulename(

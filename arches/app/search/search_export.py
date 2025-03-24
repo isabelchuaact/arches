@@ -83,9 +83,7 @@ class SearchResultsExporter(object):
         all_cards = models.CardModel.objects.filter(graph=graphid).select_related(
             "nodegroup"
         )
-        all_card_list_with_sort = all_cards.exclude(sortorder=None).order_by(
-            "sortorder"
-        )
+        all_card_list_with_sort = all_cards.exclude(sortorder=None)
         card_list_no_sort = list(all_cards.filter(sortorder=None))
         sorted_card_list = []
 
