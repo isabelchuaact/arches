@@ -200,11 +200,13 @@ class BulkDataDeletion(BaseBulkEditor):
 
         try:
             if resourceids:
-                tiles = Tile.objects.filter(nodegroup_id=nodegroupid).filter(
-                    resourceinstance_id__in=resourceids
+                tiles = (
+                    Tile.objects.filter(nodegroup_id=nodegroupid)
+                    .filter(resourceinstance_id__in=resourceids)
+                    .order_by()
                 )
             else:
-                tiles = Tile.objects.filter(nodegroup_id=nodegroupid)
+                tiles = Tile.objects.filter(nodegroup_id=nodegroupid).order_by()
             for tile in tiles.iterator(chunk_size=2000):
                 request = HttpRequest()
                 request.user = user

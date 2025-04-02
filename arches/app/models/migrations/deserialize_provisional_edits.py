@@ -9,7 +9,7 @@ def forwards_func(apps, schema_editor):
     # We get the model from the versioned app registry;
     # if we directly import it, it'll be the wrong version
     TileModel = apps.get_model("models", "TileModel")
-    tiles = TileModel.objects.all()
+    tiles = TileModel.objects.order_by()
     for tile in tiles:
         if tile.provisionaledits is not None:
             tile.provisionaledits = JSONDeserializer().deserialize(
@@ -22,7 +22,7 @@ def reverse_func(apps, schema_editor):
     # We get the model from the versioned app registry;
     # if we directly import it, it'll be the wrong version
     TileModel = apps.get_model("models", "TileModel")
-    tiles = TileModel.objects.all()
+    tiles = TileModel.objects.order_by()
     for tile in tiles:
         if tile.provisionaledits is not None:
             tile.provisionaledits = JSONSerializer().serialize(tile.provisionaledits)

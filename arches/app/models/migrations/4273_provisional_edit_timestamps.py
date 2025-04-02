@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
         TileModel = apps.get_model("models", "TileModel")
         tiles_w_provisional_edits = TileModel.objects.filter(
             provisionaledits__isnull=False
-        )
+        ).order_by()
         for tile in tiles_w_provisional_edits:
             for k, v in iter(list(tile.provisionaledits.items())):
                 naive_timestamp = datetime.strptime(v["timestamp"], local_date_format)
@@ -39,7 +39,7 @@ class Migration(migrations.Migration):
         TileModel = apps.get_model("models", "TileModel")
         tiles_w_provisional_edits = TileModel.objects.filter(
             provisionaledits__isnull=False
-        )
+        ).order_by()
         for tile in tiles_w_provisional_edits:
             for k, v in iter(list(tile.provisionaledits.items())):
                 naive_timestamp = datetime.strptime(v["timestamp"], utc_date_format)

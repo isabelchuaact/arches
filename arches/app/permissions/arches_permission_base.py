@@ -404,7 +404,9 @@ class ArchesPermissionBase(PermissionFramework, metaclass=ABCMeta):
                         nodegroups = self.get_nodegroups_by_perm(
                             user, "models.delete_nodegroup"
                         )
-                        tiles = TileModel.objects.filter(resourceinstance_id=resourceid)
+                        tiles = TileModel.objects.filter(
+                            resourceinstance_id=resourceid
+                        ).order_by()
                         protected_tiles = {tile.nodegroup_id for tile in tiles} - set(
                             nodegroups
                         )

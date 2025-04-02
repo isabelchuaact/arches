@@ -662,6 +662,7 @@ class GraphDataView(View):
                 )
                 .values_list(F("file_data__type"), flat=True)
                 .distinct()
+                .order_by()
             ):
                 if not file_type.startswith("image/"):
                     return False

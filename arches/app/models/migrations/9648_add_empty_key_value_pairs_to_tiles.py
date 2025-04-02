@@ -10,7 +10,9 @@ class Migration(migrations.Migration):
         TileModel = apps.get_model("models", "TileModel")
         Node = apps.get_model("models", "Node")
 
-        for tile in TileModel.objects.filter(data={}, provisionaledits__isnull=False):
+        for tile in TileModel.objects.filter(
+            data={}, provisionaledits__isnull=False
+        ).order_by():
             for node in Node.objects.filter(nodegroup_id=tile.nodegroup_id):
                 if not str(node.pk) in tile.data:
                     tile.data[str(node.pk)] = None
@@ -19,7 +21,7 @@ class Migration(migrations.Migration):
     def reverse_func(apps, schema_editor):
         TileModel = apps.get_model("models", "TileModel")
 
-        for tile in TileModel.objects.filter(provisionaledits__isnull=False):
+        for tile in TileModel.objects.filter(provisionaledits__isnull=False).order_by():
             if bool(tile.provisionaledits and not any(tile.data.values())):
                 tile.data = {}
                 tile.save()
