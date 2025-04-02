@@ -1616,9 +1616,13 @@ class BulkResourceReport(APIBase):
         permitted_cards = []
 
         if "cards" not in exclude:
-            cards = CardProxyModel.objects.filter(
-                graph_id__in=graph_ids_with_templates_that_preload_resource_data
-            ).select_related("nodegroup")
+            cards = (
+                CardProxyModel.objects.filter(
+                    graph_id__in=graph_ids_with_templates_that_preload_resource_data
+                )
+                .prefetch_related("cardxnodexwidget_set")
+                .select_related("nodegroup")
+            )
 
             perm = "read_nodegroup"
             permitted_cards = []
